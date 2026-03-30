@@ -270,7 +270,8 @@
                 paper: (item.paper || '').trim(),
                 question: q, 
                 mainTheme: (item.mainTheme || '').trim(),
-                otherThemes: Array.isArray(item.otherThemes) ? item.otherThemes.map(t => t.trim()).filter(t => t !== "") : []
+                otherThemes: Array.isArray(item.otherThemes) ? item.otherThemes.map(t => t.trim()).filter(Boolean) : 
+                             (item.otherThemes ? item.otherThemes.split(',').map(t => t.trim()).filter(Boolean) : []) : []
             };
         });
 
