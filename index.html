@@ -254,12 +254,11 @@
         const pdfDownloadBtn = document.getElementById('pdf-download-btn');
         let currentBlobUrl = null;
         
-        // Data processing fix for string-based otherThemes
+        // Data processing - Keeping mainTheme whole, splitting otherThemes
         allData = allData.map(item => {
             let q = (item.question || '').trim();
             q = q.replace(/\.pdf$/i, '').replace(/^q0+(\d)/i, 'q$1');
             
-            // Handle otherThemes as either a comma-separated string OR an array
             let others = [];
             if (typeof item.otherThemes === 'string') {
                 others = item.otherThemes.split(',').map(t => t.trim()).filter(t => t !== "");
@@ -270,10 +269,10 @@
             return {
                 filename: (item.filename || '').trim(),
                 year: (item.year || '').trim(),
-                pCode: (item.PCode || '').trim(), 
+                pCode: (item.PCode || item.pcode || '').trim(), 
                 paper: (item.paper || '').trim(),
                 question: q, 
-                mainTheme: (item.mainTheme || '').trim(),
+                mainTheme: (item.mainTheme || '').trim(), // Comma is kept within the string
                 otherThemes: others
             };
         });
@@ -304,7 +303,7 @@
             const naturalSort = (a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
             const yearSort = (a, b) => (parseInt(b.replace(/\D/g, '')) || 0) - (parseInt(a.replace(/\D/g, '')) || 0);
 
-            // Updated: Pull unique themes from BOTH mainTheme and the otherThemes array
+            // Pull unique themes from BOTH whole mainTheme strings and split otherThemes
             setupList('theme-filter-list', getUniques(i => [i.mainTheme, ...i.otherThemes], naturalSort), 'theme-checkbox');
             setupList('year-filter-list', getUniques(i => i.year, yearSort), 'year-checkbox');
             setupList('pcode-filter-list', getUniques(i => i.pCode, naturalSort), 'pcode-checkbox');
