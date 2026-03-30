@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prelim Viewer (Updated)</title>
+    <title>Prelim Viewer</title>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js?v=1.0.1"></script>
 	<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -98,7 +98,7 @@
 				  </div>
 				</div>
 				<label style="display:inline-flex;align-items:center;margin-left:10px;font-size:14px;">
-				  <input type="checkbox" id="include-other-themes" />
+				  <input type="checkbox" id="include-other-themes" checked />
 				  <span style="margin-left:4px;">“Other Themes”</span>
 				</label>
                 
@@ -254,10 +254,19 @@
         const pdfDownloadBtn = document.getElementById('pdf-download-btn');
         let currentBlobUrl = null;
         
-        // Clean Data and Map to new fields
+        // Data processing fix for string-based otherThemes
         allData = allData.map(item => {
             let q = (item.question || '').trim();
             q = q.replace(/\.pdf$/i, '').replace(/^q0+(\d)/i, 'q$1');
+            
+            // Handle otherThemes as either a comma-separated string OR an array
+            let others = [];
+            if (typeof item.otherThemes === 'string') {
+                others = item.otherThemes.split(',').map(t => t.trim()).filter(t => t !== "");
+            } else if (Array.isArray(item.otherThemes)) {
+                others = item.otherThemes.map(t => t.trim()).filter(t => t !== "");
+            }
+
             return {
                 filename: (item.filename || '').trim(),
                 year: (item.year || '').trim(),
@@ -265,7 +274,7 @@
                 paper: (item.paper || '').trim(),
                 question: q, 
                 mainTheme: (item.mainTheme || '').trim(),
-                otherThemes: Array.isArray(item.otherThemes) ? item.otherThemes.map(t => t.trim()).filter(t => t !== "") : []
+                otherThemes: others
             };
         });
 
@@ -295,7 +304,8 @@
             const naturalSort = (a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
             const yearSort = (a, b) => (parseInt(b.replace(/\D/g, '')) || 0) - (parseInt(a.replace(/\D/g, '')) || 0);
 
-            setupList('theme-filter-list', getUniques(i => i.mainTheme, naturalSort), 'theme-checkbox');
+            // Updated: Pull unique themes from BOTH mainTheme and the otherThemes array
+            setupList('theme-filter-list', getUniques(i => [i.mainTheme, ...i.otherThemes], naturalSort), 'theme-checkbox');
             setupList('year-filter-list', getUniques(i => i.year, yearSort), 'year-checkbox');
             setupList('pcode-filter-list', getUniques(i => i.pCode, naturalSort), 'pcode-checkbox');
             setupList('paper-filter-list', getUniques(i => i.paper, naturalSort), 'paper-checkbox');
