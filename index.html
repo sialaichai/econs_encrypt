@@ -69,7 +69,7 @@
                 </div>
 				
                 <div class="dropdown-check-container">
-                    <button id="jc-filter-btn" class="filter-button">JC (<span id="jc-filter-count">0</span>)</button>
+                    <button id="jc-filter-btn" class="filter-button">Pcode (<span id="jc-filter-count">0</span>)</button>
                     <div id="jc-filter-panel" class="dropdown-panel">
                         <div id="jc-filter-list" class="dropdown-list"></div>
                         <button id="jc-filter-apply" class="apply-button">Apply</button>
@@ -129,7 +129,7 @@
                     <tr>
                         <th>Filename</th>
                         <th>Year</th>
-                        <th>JC</th>
+                        <th>PCode</th>
                         <th>Paper</th>
                         <th>Question</th>
                         <th>Main Theme</th>
@@ -266,7 +266,7 @@
             return {
                 filename: (item.filename || '').trim(),
                 year: (item.year || '').trim(),
-                jc: (item.jc || '').trim(),
+                jc: (item.Pcode || '').trim(),
                 paper: (item.paper || '').trim(),
                 question: q, 
                 mainTheme: (item.mainTheme || '').trim(),
@@ -304,7 +304,7 @@
             // Populate filters
             setupList('topic-filter-list', getUniques(i => i.mainTheme, naturalSort), 'topic-checkbox');
             setupList('year-filter-list', getUniques(i => i.year, yearSort), 'year-checkbox');
-            setupList('jc-filter-list', getUniques(i => i.jc, naturalSort), 'jc-checkbox');
+            setupList('jc-filter-list', getUniques(i => i.Pcode, naturalSort), 'jc-checkbox');
             setupList('paper-filter-list', getUniques(i => i.paper, naturalSort), 'paper-checkbox');
             setupList('question-filter-list', getUniques(i => i.question, naturalSort), 'question-checkbox');
         }
@@ -422,7 +422,7 @@
                 fd = fd.filter(item => selectedTopics.has(item.mainTheme) || (includeOther && item.otherThemes.some(t => selectedTopics.has(t))));
             }
             if (selectedYears.size > 0) fd = fd.filter(i => selectedYears.has(i.year));
-            if (selectedJCs.size > 0) fd = fd.filter(i => selectedJCs.has(i.jc));
+            if (selectedJCs.size > 0) fd = fd.filter(i => selectedJCs.has(i.Pcode));
             if (selectedPapers.size > 0) fd = fd.filter(i => selectedPapers.has(i.paper));
             if (selectedQuestions.size > 0) fd = fd.filter(i => selectedQuestions.has(i.question));
             currentFilteredData = fd;
