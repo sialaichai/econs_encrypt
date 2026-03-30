@@ -269,8 +269,8 @@
                 jc: (item.jc || '').trim(),
                 paper: (item.paper || '').trim(),
                 question: q, 
-                mainTopic: (item.mainTopic || '').trim(),
-                otherTopics: Array.isArray(item.otherTopics) ? item.otherTopics.map(t => t.trim()).filter(t => t !== "") : []
+                mainTheme: (item.mainTheme || '').trim(),
+                otherThemes: Array.isArray(item.otherThemes) ? item.otherThemes.map(t => t.trim()).filter(t => t !== "") : []
             };
         });
 
@@ -302,7 +302,7 @@
             const yearSort = (a, b) => (parseInt(b.replace(/\D/g, '')) || 0) - (parseInt(a.replace(/\D/g, '')) || 0);
 
             // Populate filters
-            setupList('topic-filter-list', getUniques(i => i.mainTopic, naturalSort), 'topic-checkbox');
+            setupList('topic-filter-list', getUniques(i => i.mainTheme, naturalSort), 'topic-checkbox');
             setupList('year-filter-list', getUniques(i => i.year, yearSort), 'year-checkbox');
             setupList('jc-filter-list', getUniques(i => i.jc, naturalSort), 'jc-checkbox');
             setupList('paper-filter-list', getUniques(i => i.paper, naturalSort), 'paper-checkbox');
@@ -341,9 +341,9 @@
             setup('question-filter-btn', 'question-filter-panel', 'question-filter-list', 'question-filter-apply', selectedQuestions, 'question-checkbox');
 
             // 2. Fix "Other Topics" Checkbox Refresh
-            const includeOtherTopicsBox = document.getElementById('include-other-topics');
-            if (includeOtherTopicsBox) {
-                includeOtherTopicsBox.addEventListener('change', () => {
+            const includeOtherThemesBox = document.getElementById('include-other-topics');
+            if (includeOtherThemesBox) {
+                includeOtherThemesBox.addEventListener('change', () => {
                     applyFilters(data);
                 });
             }
@@ -419,7 +419,7 @@
             if (selectedTopics.size > 0) {
                 const includeOtherBox = document.getElementById('include-other-topics');
                 const includeOther = includeOtherBox ? includeOtherBox.checked : false;
-                fd = fd.filter(item => selectedTopics.has(item.mainTopic) || (includeOther && item.otherTopics.some(t => selectedTopics.has(t))));
+                fd = fd.filter(item => selectedTopics.has(item.mainTheme) || (includeOther && item.otherThemes.some(t => selectedTopics.has(t))));
             }
             if (selectedYears.size > 0) fd = fd.filter(i => selectedYears.has(i.year));
             if (selectedJCs.size > 0) fd = fd.filter(i => selectedJCs.has(i.jc));
@@ -438,7 +438,7 @@
 
             // Sort data dynamically
             data.sort((a, b) => {
-                const keys = ['filename', 'year', 'jc', 'paper', 'question', 'mainTopic', 'otherTopics'];
+                const keys = ['filename', 'year', 'jc', 'paper', 'question', 'mainTheme', 'otherThemes'];
                 const key = keys[currentSort.column];
                 let valA = a[key], valB = b[key];
                 
@@ -455,7 +455,7 @@
             tableBody.innerHTML = '';
             data.slice(0, 500).forEach(r => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${r.filename}</td><td>${r.year}</td><td>${r.jc}</td><td>${r.paper}</td><td>${r.question}</td><td>${r.mainTopic}</td><td>${r.otherTopics.join(', ')}</td>`;
+                tr.innerHTML = `<td>${r.filename}</td><td>${r.year}</td><td>${r.jc}</td><td>${r.paper}</td><td>${r.question}</td><td>${r.mainTheme}</td><td>${r.otherThemes.join(', ')}</td>`;
                 
                 tr.addEventListener('click', async () => {
                     try {
