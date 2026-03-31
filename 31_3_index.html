@@ -67,7 +67,7 @@
                 </div>
 				
                 <div class="dropdown-check-container">
-                    <button id="pcode-filter-btn" class="filter-button">PCode/JC (<span id="pcode-filter-count">0</span>)</button>
+                    <button id="pcode-filter-btn" class="filter-button">PCode (<span id="pcode-filter-count">0</span>)</button>
                     <div id="pcode-filter-panel" class="dropdown-panel">
                         <div id="pcode-filter-list" class="dropdown-list"></div>
                         <button id="pcode-filter-apply" class="apply-button">Apply</button>
@@ -127,7 +127,7 @@
                     <tr>
                         <th>Filename</th>
                         <th>Year</th>
-                        <th>PCode/JC</th>
+                        <th>PCode</th>
                         <th>Paper</th>
                         <th>Question</th>
                         <th>Main Theme</th>
@@ -254,22 +254,16 @@
         const pdfDownloadBtn = document.getElementById('pdf-download-btn');
         let currentBlobUrl = null;
         
-        // --- DATA PROCESSING FIX ---
+        // Data processing - Keeping mainTheme whole, splitting otherThemes
         allData = allData.map(item => {
             let q = (item.question || '').trim();
             q = q.replace(/\.pdf$/i, '').replace(/^q0+(\d)/i, 'q$1');
             
-            // KEEP mainTheme WHOLE (no split)
-            let mainT = (item.mainTheme || '').trim();
-
-            // SMART-SPLIT otherThemes: 
-            // Splits by comma ONLY if followed by a space and a Digit (to avoid splitting "Globalisation, International")
-            let othersRaw = (item.otherThemes || '');
             let others = [];
-            if (typeof othersRaw === 'string') {
-                others = othersRaw.split(/, (?=\d)/).map(t => t.trim()).filter(t => t !== "");
-            } else if (Array.isArray(othersRaw)) {
-                others = othersRaw.map(t => t.trim()).filter(t => t !== "");
+            if (typeof item.otherThemes === 'string') {
+                others = item.otherThemes.split(',').map(t => t.trim()).filter(t => t !== "");
+            } else if (Array.isArray(item.otherThemes)) {
+                others = item.otherThemes.map(t => t.trim()).filter(t => t !== "");
             }
 
             return {
@@ -278,14 +272,14 @@
                 pCode: (item.PCode || item.pcode || '').trim(), 
                 paper: (item.paper || '').trim(),
                 question: q, 
-                mainTheme: mainT,
+                mainTheme: (item.mainTheme || '').trim(), // Comma is kept within the string
                 otherThemes: others
             };
         });
 
         let currentFilteredData = [...allData]; 
         let currentSort = { column: 1, asc: false }; 
-        const baseHeaders = ['Filename', 'Year', 'PCode/JC', 'Paper', 'Question', 'Main Theme', 'Other Themes'];
+        const baseHeaders = ['Filename', 'Year', 'PCode', 'Paper', 'Question', 'Main Theme', 'Other Themes'];
 
         const headers = document.querySelectorAll('#data-table th');
         headers.forEach((th, index) => {
@@ -309,7 +303,7 @@
             const naturalSort = (a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
             const yearSort = (a, b) => (parseInt(b.replace(/\D/g, '')) || 0) - (parseInt(a.replace(/\D/g, '')) || 0);
 
-            // Pull unique themes from BOTH whole mainTheme strings and the processed otherThemes
+            // Pull unique themes from BOTH whole mainTheme strings and split otherThemes
             setupList('theme-filter-list', getUniques(i => [i.mainTheme, ...i.otherThemes], naturalSort), 'theme-checkbox');
             setupList('year-filter-list', getUniques(i => i.year, yearSort), 'year-checkbox');
             setupList('pcode-filter-list', getUniques(i => i.pCode, naturalSort), 'pcode-checkbox');
