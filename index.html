@@ -67,7 +67,7 @@
                 </div>
 				
                 <div class="dropdown-check-container">
-                    <button id="pcode-filter-btn" class="filter-button">PCode (<span id="pcode-filter-count">0</span>)</button>
+                    <button id="pcode-filter-btn" class="filter-button">PCode/JC (<span id="pcode-filter-count">0</span>)</button>
                     <div id="pcode-filter-panel" class="dropdown-panel">
                         <div id="pcode-filter-list" class="dropdown-list"></div>
                         <button id="pcode-filter-apply" class="apply-button">Apply</button>
@@ -127,7 +127,7 @@
                     <tr>
                         <th>Filename</th>
                         <th>Year</th>
-                        <th>PCode</th>
+                        <th>PCode/JC</th>
                         <th>Paper</th>
                         <th>Question</th>
                         <th>Main Theme</th>
@@ -285,7 +285,7 @@
 
         let currentFilteredData = [...allData]; 
         let currentSort = { column: 1, asc: false }; 
-        const baseHeaders = ['Filename', 'Year', 'PCode', 'Paper', 'Question', 'Main Theme', 'Other Themes'];
+        const baseHeaders = ['Filename', 'Year', 'PCode/JC', 'Paper', 'Question', 'Main Theme', 'Other Themes'];
 
         const headers = document.querySelectorAll('#data-table th');
         headers.forEach((th, index) => {
